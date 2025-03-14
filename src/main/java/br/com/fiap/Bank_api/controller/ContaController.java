@@ -2,6 +2,7 @@ package br.com.fiap.Bank_api.controller;
 
 import br.com.fiap.Bank_api.model.Account;
 import br.com.fiap.Bank_api.model.Deposit;
+import br.com.fiap.Bank_api.model.Transfer;
 import br.com.fiap.Bank_api.model.Withdraw;
 import br.com.fiap.Bank_api.service.ContaService;
 import org.springframework.http.HttpStatus;
@@ -54,12 +55,17 @@ public class ContaController {
 
     @PatchMapping("/deposit")
     public ResponseEntity<Account> deposit(@RequestBody Deposit deposit) {
-        return ResponseEntity.ok(cs.deposit(getById(deposit.getId()), deposit));
+        return ResponseEntity.ok(cs.deposit(getById(deposit.getId()), deposit.getValue()));
     }
 
     @PatchMapping("/withdraw")
     public ResponseEntity<Account> withdraw(@RequestBody Withdraw withdraw) {
-        return ResponseEntity.ok(cs.withdraw(getById(withdraw.getId()), withdraw));
+        return ResponseEntity.ok(cs.withdraw(getById(withdraw.getId()), withdraw.getValue()));
+    }
+
+    @PatchMapping("/transfer")
+    public ResponseEntity<Account> transfer(@RequestBody Transfer transfer) {
+        return ResponseEntity.ok(cs.transfer(getById(transfer.getIdDestiny()), getById(transfer.getIdOrigin()), transfer));
     }
 
     // Métodos

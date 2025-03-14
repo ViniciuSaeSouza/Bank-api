@@ -17,25 +17,37 @@ public class ContaService {
         }
     }
 
-    public Account deposit(Account account, Deposit deposit) {
-        checkValue(deposit);
-        account.setSaldo(account.getSaldo().add(deposit.getValue()));
+    public Account deposit(Account account, BigDecimal value) {
+        checkValue(value);
+        account.setSaldo(account.getSaldo().add(value));
         return account;
     }
 
-    private void checkValue(AccountMovement movement) {
-        if (!checkPositiveValue(movement.getValue())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Valor deve ser maior que 0, valor: " + movement.getValue());
+    private void checkValue(BigDecimal value) {
+        if (!checkPositiveValue(value)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Valor deve ser maior que 0, valor: " + value);
         }
     }
 
-    public Account withdraw(Account account , Withdraw withdraw) {
-        checkValue(withdraw);
-        if (account.getSaldo().compareTo(withdraw.getValue()) < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo da conta insuficiente, saldo: " + account.getSaldo());
-        }
-        account.setSaldo(account.getSaldo().subtract(withdraw.getValue()));
+    public Account withdraw(Account account, BigDecimal value) {
+        checkValue(value);
+        checkBalance(account.getSaldo(), value);
+        account.setSaldo(account.getSaldo().subtract(value));
         return account;
+    }
+
+    // Percebi que estou repetindo muito o termo 'transfer', isso não é bom, né?
+    public Account transfer(Account destinyAccount, Account originAccount, Transfer transfer) {
+        checkValue(transfer.getValue());
+        checkBalance(originAccount.getSaldo(), transfer.getValue());
+        withdraw(originAccount, transfer.getValue());
+        return deposit(destinyAccount, transfer.getValue());
+    }
+
+    private static void checkBalance(BigDecimal balance, BigDecimal value) {
+        if (balance.compareTo(value) < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo da conta insuficiente, saldo: " + balance);
+        }
     }
 
     public boolean checkBlankOrNull(String s) {
@@ -70,4 +82,6 @@ public class ContaService {
     public boolean checkPositiveValue(BigDecimal value) {
         return value.compareTo(BigDecimal.ZERO) >= 0;
     }
+
+
 }
