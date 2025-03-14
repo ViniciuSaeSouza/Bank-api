@@ -51,31 +51,19 @@ public class ContaService {
     }
 
     public boolean checkBlankOrNull(String s) {
-        if (s == null || s.isEmpty()) {
-            return true;
-        }
-        return false;
+        return s == null || s.isEmpty();
     }
 
     public boolean checkBalanceNullOrZero(BigDecimal balance) {
-        if (balance == null || balance.compareTo(BigDecimal.ZERO) < 0) {
-            return true;
-        }
-        return false;
+        return balance == null || balance.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public boolean checkType(String accountType) {
-        if (accountType == null || accountType.isEmpty() || AccountType.valueOf(accountType).toString().isEmpty()) {
-            return true;
-        }
-        return false;
+        return accountType == null || accountType.isEmpty() || AccountType.valueOf(accountType).toString().isEmpty();
     }
 
     public boolean checkOpeningDate(LocalDate date) {
-        if (LocalDate.now().isBefore(date)) {
-            return true;
-        }
-        return false;
+        return LocalDate.now().isBefore(date);
     }
 
 
